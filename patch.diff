@@ -1,0 +1,251 @@
+From e614a7b10977136c4ca2507a434d989db0ca368e Mon Sep 17 00:00:00 2001
+From: skilesare <austin.fatheree@gmail.com>
+Date: Sat, 20 Aug 2022 19:19:53 -0500
+Subject: [PATCH] converting to exos
+
+---
+ .../hardhat/contracts/YourCollectible.sol     |   2 +-
+ packages/hardhat/scripts/mint.js              | 113 +++---------------
+ packages/react-app/src/App.jsx                |  25 ++--
+ 3 files changed, 28 insertions(+), 112 deletions(-)
+
+diff --git a/packages/hardhat/contracts/YourCollectible.sol b/packages/hardhat/contracts/YourCollectible.sol
+index cbfd28b..e81593e 100644
+--- a/packages/hardhat/contracts/YourCollectible.sol
++++ b/packages/hardhat/contracts/YourCollectible.sol
+@@ -20,7 +20,7 @@ contract YourCollectible is
+     constructor() ERC721("YourCollectible", "YCB") {}
+ 
+     function _baseURI() internal pure override returns (string memory) {
+-        return "https://ipfs.io/ipfs/";
++        return "";
+     }
+ 
+     function mintItem(address to, string memory uri) public returns (uint256) {
+diff --git a/packages/hardhat/scripts/mint.js b/packages/hardhat/scripts/mint.js
+index dff6af4..3d5fe67 100644
+--- a/packages/hardhat/scripts/mint.js
++++ b/packages/hardhat/scripts/mint.js
+@@ -16,7 +16,7 @@ const ipfs = ipfsAPI({
+ */
+ 
+ const ipfs = ipfsAPI({
+-  host: "ipfs.infura.io",
++  host: "gateway.ipfs.io",
+   port: "5001",
+   protocol: "https",
+ });
+@@ -25,128 +25,47 @@ const delayMS = 1000; // sometimes xDAI needs a 6000ms break lol 😅
+ 
+ const main = async () => {
+   // ADDRESS TO MINT TO:
+-  const toAddress = "YOUR_FRONTEND_ADDRESS";
++  const toAddress = "0xB6DeaaaC6a6237690DF52E0Fa8C7734a9c8514E8";
+ 
+   console.log("\n\n 🎫 Minting to " + toAddress + "...\n");
+ 
+   const { deployer } = await getNamedAccounts();
+   const yourCollectible = await ethers.getContract("YourCollectible", deployer);
+ 
+-  const buffalo = {
+-    description: "It's actually a bison?",
+-    external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
+-    image: "https://austingriffith.com/images/paintings/buffalo.jpg",
+-    name: "Buffalo",
+-    attributes: [
+-      {
+-        trait_type: "BackgroundColor",
+-        value: "green",
+-      },
+-      {
+-        trait_type: "Eyes",
+-        value: "googly",
+-      },
+-      {
+-        trait_type: "Stamina",
+-        value: 42,
+-      },
+-    ],
+-  };
++  
++
+   console.log("Uploading buffalo...");
+-  const uploaded = await ipfs.add(JSON.stringify(buffalo));
++  
+ 
+-  console.log("Minting buffalo with IPFS hash (" + uploaded.path + ")");
+-  await yourCollectible.mintItem(toAddress, uploaded.path, {
++  //console.log("Minting buffalo with IPFS hash (" + uploaded.path + ")");
++  await yourCollectible.mintItem(toAddress, "https://exos.origyn.network/-/ethmex/-/bm-0/info", {
+     gasLimit: 400000,
+   });
+ 
+   await sleep(delayMS);
+ 
+-  const zebra = {
+-    description: "What is it so worried about?",
+-    external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
+-    image: "https://austingriffith.com/images/paintings/zebra.jpg",
+-    name: "Zebra",
+-    attributes: [
+-      {
+-        trait_type: "BackgroundColor",
+-        value: "blue",
+-      },
+-      {
+-        trait_type: "Eyes",
+-        value: "googly",
+-      },
+-      {
+-        trait_type: "Stamina",
+-        value: 38,
+-      },
+-    ],
+-  };
++  
+   console.log("Uploading zebra...");
+-  const uploadedzebra = await ipfs.add(JSON.stringify(zebra));
+-
+-  console.log("Minting zebra with IPFS hash (" + uploadedzebra.path + ")");
+-  await yourCollectible.mintItem(toAddress, uploadedzebra.path, {
++  
++  await yourCollectible.mintItem(toAddress, "https://exos.origyn.network/-/ethmex/-/bm-1/info", {
+     gasLimit: 400000,
+   });
+ 
+   await sleep(delayMS);
+ 
+-  const rhino = {
+-    description: "What a horn!",
+-    external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
+-    image: "https://austingriffith.com/images/paintings/rhino.jpg",
+-    name: "Rhino",
+-    attributes: [
+-      {
+-        trait_type: "BackgroundColor",
+-        value: "pink",
+-      },
+-      {
+-        trait_type: "Eyes",
+-        value: "googly",
+-      },
+-      {
+-        trait_type: "Stamina",
+-        value: 22,
+-      },
+-    ],
+-  };
++  
+   console.log("Uploading rhino...");
+-  const uploadedrhino = await ipfs.add(JSON.stringify(rhino));
+-
+-  console.log("Minting rhino with IPFS hash (" + uploadedrhino.path + ")");
+-  await yourCollectible.mintItem(toAddress, uploadedrhino.path, {
++  
++  await yourCollectible.mintItem(toAddress, "https://exos.origyn.network/-/ethmex/-/bm-2/info", {
+     gasLimit: 400000,
+   });
+ 
+   await sleep(delayMS);
+ 
+-  const fish = {
+-    description: "Is that an underbyte?",
+-    external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
+-    image: "https://austingriffith.com/images/paintings/fish.jpg",
+-    name: "Fish",
+-    attributes: [
+-      {
+-        trait_type: "BackgroundColor",
+-        value: "blue",
+-      },
+-      {
+-        trait_type: "Eyes",
+-        value: "googly",
+-      },
+-      {
+-        trait_type: "Stamina",
+-        value: 15,
+-      },
+-    ],
+-  };
++  
+   console.log("Uploading fish...");
+-  const uploadedfish = await ipfs.add(JSON.stringify(fish));
+-
+-  console.log("Minting fish with IPFS hash (" + uploadedfish.path + ")");
+-  await yourCollectible.mintItem(toAddress, uploadedfish.path, {
++  
++  await yourCollectible.mintItem(toAddress, "https://exos.origyn.network/-/ethmex/-/bm-3/info", {
+     gasLimit: 400000,
+   });
+ 
+diff --git a/packages/react-app/src/App.jsx b/packages/react-app/src/App.jsx
+index 3b3270e..9823462 100644
+--- a/packages/react-app/src/App.jsx
++++ b/packages/react-app/src/App.jsx
+@@ -34,13 +34,7 @@ const projectSecret = "96a91eeafc0a390ab66e6a87f61152aa";
+ const projectIdAndSecret = `${projectId}:${projectSecret}`;
+ 
+ const { BufferList } = require("bl");
+-const ipfsAPI = require("ipfs-http-client");
+ 
+-const ipfs = ipfsAPI({
+-  host: "ipfs.nifty.ink",
+-  port: "3001",
+-  protocol: "https",
+-});
+ /*
+ const ipfs = ipfsAPI({
+   host: "ipfs.infura.io",
+@@ -311,13 +305,16 @@ function App(props) {
+           const tokenURI = await readContracts.YourCollectible.tokenURI(tokenId);
+           console.log("tokenURI", tokenURI);
+ 
+-          const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
+-          console.log("ipfsHash", ipfsHash);
+-
+-          const jsonManifestBuffer = await getFromIPFS(ipfsHash);
++          //const ipfsHash = tokenURI.replace("https://ipfs.io/ipfs/", "");
++          //console.log("ipfsHash", ipfsHash);
++          
++          const jsonManifestBuffer = await fetch(tokenURI, { method: 'GET',  headers: {"Accept": "application/json"}});
++        
++          
++          console.log(jsonManifestBuffer);
+ 
+           try {
+-            const jsonManifest = JSON.parse(jsonManifestBuffer.toString());
++            const jsonManifest = await jsonManifestBuffer.json();
+             console.log("jsonManifest", jsonManifest);
+             collectibleUpdate.push({ id: tokenId, uri: tokenURI, owner: address, ...jsonManifest });
+           } catch (e) {
+@@ -760,7 +757,7 @@ function App(props) {
+                 bordered
+                 dataSource={yourCollectibles}
+                 renderItem={item => {
+-                  const id = item.id.toNumber();
++                  const id = item.id;
+                   return (
+                     <List.Item key={id + "_" + item.uri + "_" + item.owner}>
+                       <Card
+@@ -797,7 +794,7 @@ function App(props) {
+                         <Button
+                           onClick={() => {
+                             console.log("writeContracts", writeContracts);
+-                            tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], id));
++                            tx(writeContracts.YourCollectible.transferFrom(address, transferToAddresses[id], parseInt(id.replace("bm-",""))+1));
+                           }}
+                         >
+                           Transfer
+@@ -874,7 +871,7 @@ function App(props) {
+             <div style={{ paddingTop: 32, width: 740, margin: "auto" }}>
+               <Input
+                 value={ipfsDownHash}
+-                placeHolder="IPFS hash (like QmadqNw8zkdrrwdtPFK1pLi8PPxmkQ4pDJXY8ozHtz6tZq)"
++                placeholder="IPFS hash (like QmadqNw8zkdrrwdtPFK1pLi8PPxmkQ4pDJXY8ozHtz6tZq)"
+                 onChange={e => {
+                   setIpfsDownHash(e.target.value);
+                 }}
+-- 
+2.37.0
+
